@@ -11,7 +11,7 @@ public class Client {
     private int port;
 
     public static void main(String[] args) {
-        Client client = new Client("127.0.0.1", 10000);
+        Client client = new Client("localhost", 10000);
         client.connect();
     }
 

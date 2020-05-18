@@ -7,29 +7,21 @@ import java.awt.geom.Point2D;
 
 public class Food{
 
-    private Color color;
-    private Point2D position;
     private Shape shape;
-    private int width;
-    private int height;
+    private Point2D position;
+    private Color color;
     private double gainValue;
 
-    public Food(Color color, Point2D position, int width, int height) {
-        this.color = color;
+    public Food(Shape shape, Point2D position, Color color) {
+        this.shape = shape;
         this.position = position;
-        this.width = width;
-        this.height = height;
-        this.shape = new Ellipse2D.Double(0,0,width,height);
+        this.color = color;
         this.gainValue = calculateGainValue();
     }
 
     public void draw(FXGraphics2D graphics2D){
-        graphics2D.setColor(color);
-        graphics2D.fill(getTransformedShape());
-
-    }
-    public Shape getTransformedShape(){
-        return getTransform().createTransformedShape(shape);
+        graphics2D.setColor(this.color);
+        graphics2D.fill(this.shape);
     }
 
     public AffineTransform getTransform(){
@@ -42,20 +34,12 @@ public class Food{
         return 1+1*Math.random();
     }
 
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
     public double getGainValue() {
-        return gainValue;
+        return this.gainValue;
     }
 
     public Color getColor() {
-        return color;
+        return this.color;
     }
 
     public void setColor(Color color) {
@@ -63,7 +47,7 @@ public class Food{
     }
 
     public Point2D getPosition() {
-        return position;
+        return this.position;
     }
 
     public void setPosition(Point2D position) {
@@ -71,7 +55,7 @@ public class Food{
     }
 
     public Shape getShape() {
-        return shape;
+        return this.shape;
     }
 
     public void setShape(Shape shape) {

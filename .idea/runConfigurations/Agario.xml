@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Agario" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="server.AgarioServer" />
+    <module name="Agario" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

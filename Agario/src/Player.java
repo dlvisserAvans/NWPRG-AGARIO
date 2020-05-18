@@ -15,7 +15,7 @@ public class Player {
     public Player(Color color) {
         this.color = color;
         this.position = new Point2D.Double(0,0);
-        this.shape = new Ellipse2D.Double(0,0,width,height);
+        this.shape = new Ellipse2D.Double(0,0, width, height);
         this.width = 40;
         this.height = 40;
         this.valuepoints = 0;
