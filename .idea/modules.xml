@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Client_Game/Client_Game.iml" filepath="$PROJECT_DIR$/Client_Game/Client_Game.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Agario/Agario.iml" filepath="$PROJECT_DIR$/Agario/Agario.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/NWPRG-AGARIO.iml" filepath="$PROJECT_DIR$/.idea/NWPRG-AGARIO.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Server_Game/Server_Game.iml" filepath="$PROJECT_DIR$/Server_Game/Server_Game.iml" />
     </modules>
   </component>
 </project>
