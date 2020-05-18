@@ -6,11 +6,18 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class AgarioServer {
 
-    private final int port = 10000;
+    private final int port;
     private ServerSocket serverSocket;
+    private Thread serverThread;
+
+
+    public AgarioServer() {
+        this.port = 10000;
+    }
 
     public static void main(String[] args) {
         System.out.println("Server starting.....");
@@ -26,7 +33,7 @@ public class AgarioServer {
                 System.out.println("Waiting for users to connect....");
                 Socket socket = this.serverSocket.accept();
 
-                System.out.println("Client connected via address: " + socket.getInetAddress().getHostAddress());
+                System.out.println("AgarioClient connected via address: " + socket.getInetAddress().getHostAddress());
                 ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
                 DataInputStream in = new DataInputStream(socket.getInputStream());
 

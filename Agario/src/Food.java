@@ -11,12 +11,14 @@ public class Food{
     private Point2D position;
     private Color color;
     private double gainValue;
+    private double radius;
 
-    public Food(Shape shape, Point2D position, Color color) {
-        this.shape = shape;
+    public Food(Point2D position, Color color, int width, int height) {
+        this.shape = new Ellipse2D.Double(position.getX(), position.getY(), width, height);
         this.position = position;
         this.color = color;
         this.gainValue = calculateGainValue();
+        this.radius = 0.5 * width;
     }
 
     public void draw(FXGraphics2D graphics2D){
@@ -40,6 +42,10 @@ public class Food{
 
     public Color getColor() {
         return this.color;
+    }
+
+    public double getRadius(){
+        return this.radius;
     }
 
     public void setColor(Color color) {
