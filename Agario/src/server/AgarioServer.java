@@ -17,12 +17,12 @@ public class AgarioServer {
     private final int port;
     private ServerSocket serverSocket;
     private Thread serverThread;
-    private DataOutputStream dataOutputStream;
-    private DataInputStream dataInputStream;
-    private ObjectOutputStream objectOutputStream;
-    private ObjectInputStream objectInputStream;
+    private ArrayList<Client> clients;
+    private ArrayList<Thread> threads;
+
+
     ArrayList<Food> foods = new ArrayList<>();
-    ArrayList<Player> players = new ArrayList<>();
+//    ArrayList<Player> players = new ArrayList<>();
     int foodamount = 128;
     int screenx = 3000;
     int screeny = 3000;
@@ -30,10 +30,10 @@ public class AgarioServer {
 
     public AgarioServer() {
         this.port = 10000;
-        dataInputStream = null;
-        dataOutputStream = null;
-        objectInputStream = null;
-        objectOutputStream = null;
+
+
+        this.clients = new ArrayList<>();
+        this.threads = new ArrayList<>();
     }
 
     public static void main(String[] args) {
@@ -45,34 +45,42 @@ public class AgarioServer {
     public void connect(){
         try {
             this.serverSocket = new ServerSocket(port);
-            System.out.println("Agar.io server 1.0 is starting...");
-            boolean isRunning = true;
-            initializeGame();
 
-            while (isRunning){
-                System.out.println("Waiting for users to connect....");
-                Socket socket = this.serverSocket.accept();
+            this.serverThread = new Thread( () -> {
+                System.out.println("Agar.io server 1.0 is starting...");
+                boolean isRunning = true;
+                initializeGame();
 
-                System.out.println("AgarioClient connected via address: " + socket.getInetAddress().getHostAddress());
-                dataOutputStream = new DataOutputStream(socket.getOutputStream());
-                objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-                dataInputStream = new DataInputStream(socket.getInputStream());
-                objectInputStream = new ObjectInputStream(socket.getInputStream());
+                while (isRunning){
+                    System.out.println("Waiting for users to connect....");
 
-                String test = dataInputStream.readUTF();
-                System.out.println("Name :" + test);
+                    Socket socket = null;
+                    try {
+                        socket = this.serverSocket.accept();
+                        System.out.println("AgarioClient connected via address: " + socket.getInetAddress().getHostAddress());
 
-                Player player = (Player) objectInputStream.readObject();
-                players.add(player);
+                        Client client = new Client(socket, this);
+                        Thread threadClient = new Thread(client);
+                        threadClient.start();
+                        this.clients.add(client);
+                        this.threads.add(threadClient);
 
-                System.out.println(player.getName());
-                System.out.println(player.getPosition());
-            }
-            this.serverSocket.close();
+                        System.out.println("Total users connected: " + this.clients.size());
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    Thread.yield();
+                }
+            });
+            this.serverThread.start();
 
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }

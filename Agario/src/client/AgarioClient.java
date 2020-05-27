@@ -19,13 +19,15 @@ public class AgarioClient {
     private ObjectInputStream objectInputStream;
 
     public static void main(String[] args) {
-        AgarioClient agarioClient = new AgarioClient("localhost", 10000);
+        AgarioClient agarioClient = new AgarioClient("localhost", 10000, "Someone");
         agarioClient.connect();
     }
 
-    public AgarioClient(String hostname, int port) {
+    public AgarioClient(String hostname, int port, String name) {
         this.hostname = hostname;
         this.port = port;
+        this.name = name;
+        this.player = new Player(name);
         dataInputStream = null;
         dataOutputStream = null;
         objectInputStream = null;
