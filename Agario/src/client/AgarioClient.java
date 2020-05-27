@@ -1,8 +1,8 @@
 package client;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import Data.Player;
+
+import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -12,6 +12,11 @@ public class AgarioClient {
     private String hostname;
     private int port;
     private String name;
+    private Player player;
+    private DataOutputStream dataOutputStream;
+    private DataInputStream dataInputStream;
+    private ObjectOutputStream objectOutputStream;
+    private ObjectInputStream objectInputStream;
 
     public static void main(String[] args) {
         AgarioClient agarioClient = new AgarioClient("localhost", 10000);
@@ -21,6 +26,10 @@ public class AgarioClient {
     public AgarioClient(String hostname, int port) {
         this.hostname = hostname;
         this.port = port;
+        dataInputStream = null;
+        dataOutputStream = null;
+        objectInputStream = null;
+        objectOutputStream = null;
     }
 
     public void connect() {
@@ -29,12 +38,15 @@ public class AgarioClient {
         try {
             this.socket = new Socket(this.hostname, this.port);
 
-            DataOutputStream out = new DataOutputStream( this.socket.getOutputStream() );
-            DataInputStream in = new DataInputStream( this.socket.getInputStream() );
+            dataOutputStream = new DataOutputStream(this.socket.getOutputStream());
+            objectOutputStream = new ObjectOutputStream(this.socket.getOutputStream());
+            dataInputStream = new DataInputStream(this.socket.getInputStream());
+            objectInputStream = new ObjectInputStream(this.socket.getInputStream());
 
-            System.out.print("What is your name: ");
-            this.name = scanner.nextLine();
-            out.writeUTF(this.name);
+            System.out.print("What is your username: ");
+            name = scanner.nextLine();
+            dataOutputStream.writeUTF(name);
+            objectOutputStream.writeObject(new Player(name));
 
             socket.close();
 

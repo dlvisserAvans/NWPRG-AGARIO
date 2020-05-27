@@ -1,3 +1,5 @@
+package Data;
+
 import org.jfree.fx.FXGraphics2D;
 
 import java.awt.*;

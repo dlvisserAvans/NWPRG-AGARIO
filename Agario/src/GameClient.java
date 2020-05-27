@@ -4,6 +4,8 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
+import Data.Food;
+import Data.Player;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -16,16 +18,15 @@ import org.jfree.fx.ResizableCanvas;
 
 public class GameClient extends Application {
     ResizableCanvas canvas;
-    ArrayList<Food> foods = new ArrayList<>();
     ArrayList<Player> players = new ArrayList<>();
-    int screenx = 2560;
-    int screeny = 1080;
-    int foodamount = 128;
+    ArrayList<Food> foods = new ArrayList<>();
     Color[] colors = {Color.RED,Color.GREEN,Color.BLUE,Color.YELLOW,Color.CYAN,Color.MAGENTA,Color.BLACK,Color.GRAY,Color.LIGHT_GRAY,Color.DARK_GRAY,Color.ORANGE,Color.PINK};
     private Point2D mousepoint;
     private Player selectedShape = null;
     private Food touchedFood = null;
     private double speed = 0;
+    int screenx = 1920;
+    int screeny = 1080;
     private FXGraphics2D graphics;
 
     @Override
@@ -47,7 +48,6 @@ public class GameClient extends Application {
             }
         }.start();
 
-
         canvas.setOnKeyPressed(e -> keyPressed(e));
         canvas.setOnKeyReleased(e -> keyReleased(e));
         canvas.setOnMousePressed(e -> mouseClicked(e));
@@ -62,12 +62,6 @@ public class GameClient extends Application {
     }
 
     private void update(double v) {
-        if (foods.size() < foodamount){
-            int randomX = (int)(Math.random() * screenx);
-            int randomY = (int)(Math.random() * screeny);
-            this.foods.add(new Food(new Point2D.Double(randomX, randomY), getRandomColor(), 20, 20));
-
-        }
         for (Food food : this.foods){
             for (Player player : this.players){
                 double distance = food.getRadius() + player.getRadius();
@@ -75,27 +69,15 @@ public class GameClient extends Application {
                     touchedFood = food;
                     player.growSize();
                     player.draw(this.graphics);
-
                 }
             }
-
         }
-        this.foods.remove(touchedFood);
 
+        //TODO: Sent to server
+        this.foods.remove(touchedFood);
     }
 
     public void init(){
-        for (int i =0 ; i < foodamount; i++){
-            int randomX = (int)(Math.random() * screenx);
-            int randomY = (int)(Math.random() * screeny);
-            Color color = (Color) Array.get(colors,i%12);
-            this.foods.add(new Food(new Point2D.Double(randomX, randomY), getRandomColor(), 20, 20));
-        }
-
-        int randomX = (int)(Math.random() * screenx);
-        int randomY = (int)(Math.random() * screeny);
-        Player player = new Player(new Point2D.Double(40, 40), getRandomColor(), 40, 40, "Jan Kees");
-        this.players.add(player);
     }
 
     public void draw(FXGraphics2D graphics) {
@@ -109,11 +91,6 @@ public class GameClient extends Application {
         for (Player player : this.players){
             player.draw(graphics);
         }
-    }
-
-    public Color getRandomColor(){
-        int rnd = new Random().nextInt(colors.length);
-        return (Color)Array.get(colors, rnd);
     }
 
     public void mouseClicked(MouseEvent e){
@@ -138,6 +115,11 @@ public class GameClient extends Application {
             selectedShape.setShape(affineTransform.createTransformedShape(selectedShape.getShape()));
             draw(new FXGraphics2D(canvas.getGraphicsContext2D()));
         }
+    }
+
+    public Color getRandomColor(){
+        int rnd = new Random().nextInt(colors.length);
+        return (Color)Array.get(colors, rnd);
     }
 
     public void keyPressed(KeyEvent e){
