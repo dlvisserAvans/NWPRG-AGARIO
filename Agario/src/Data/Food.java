@@ -15,6 +15,7 @@ public class Food implements Serializable {
     private Color color;
     private double gainValue;
     private double radius;
+    private boolean eaten;
 
     public Food(Point2D position, Color color, int width, int height) {
         this.shape = new Ellipse2D.Double(position.getX(), position.getY(), width, height);
@@ -22,6 +23,7 @@ public class Food implements Serializable {
         this.color = color;
         this.gainValue = calculateGainValue();
         this.radius = 0.5 * width;
+        this.eaten = false;
     }
 
     public void draw(FXGraphics2D graphics2D){
@@ -71,4 +73,11 @@ public class Food implements Serializable {
         this.shape = shape;
     }
 
+    public boolean isEaten() {
+        return eaten;
+    }
+
+    public void setEaten(boolean eaten) {
+        this.eaten = eaten;
+    }
 }

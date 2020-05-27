@@ -4,6 +4,7 @@ import Data.Player;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ConcurrentModificationException;
 
 public class Client implements Runnable{
 
@@ -13,6 +14,8 @@ public class Client implements Runnable{
     private DataInputStream dataInputStream;
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
+    private Player player;
+    String name;
 
     public Client(Socket socket, AgarioServer agarioServer){
         this.socket = socket;
@@ -21,6 +24,8 @@ public class Client implements Runnable{
         dataOutputStream = null;
         objectInputStream = null;
         objectOutputStream = null;
+        this.name = "";
+        this.player = null;
     }
 
 
@@ -32,35 +37,51 @@ public class Client implements Runnable{
             dataInputStream = new DataInputStream(socket.getInputStream());
             objectInputStream = new ObjectInputStream(socket.getInputStream());
 
-            String name = dataInputStream.readUTF();
-            System.out.println("Name :" + name);
+            this.name = dataInputStream.readUTF();
+            System.out.println("Name :" + this.name);
 
             //Step 1: Get/Set player name.
-            Player player = (Player) objectInputStream.readObject();
+            this.player = (Player) objectInputStream.readObject();
             player.setName(name);
+            this.agarioServer.addPlayer(this.player);
 
-            System.out.println(player.getName());
-            System.out.println(player.getPosition());
+            System.out.println(this.player.getName());
+            System.out.println(this.player.getPosition());
+
             //Step 2: get the food from the server.
-            while (true) {
-                this.agarioServer.sentFoodToAllClients();
-                System.out.println("Test");
+            String start = dataInputStream.readUTF();
+            System.out.println(start);
+
+            if (start.equals("start")){
+                while (true) {
+                    this.agarioServer.sentFoodToAllClients();
+                    this.agarioServer.sentPlayersToAllClients();
+                    this.player = (Player) objectInputStream.readObject();
+                    this.agarioServer.update(this.player);
+                }
             }
+
 
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+        } catch (ConcurrentModificationException e){
+            System.out.println("Name: " + this.name);
+            e.printStackTrace();
         }
     }
 
     public void writeObject(Object object){
-        System.out.println("Sending objects to all players");
         try {
             this.objectOutputStream.writeObject(object);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getName(){
+        return this.name;
     }
 
 }

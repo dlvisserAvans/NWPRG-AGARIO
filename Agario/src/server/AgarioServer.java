@@ -20,9 +20,8 @@ public class AgarioServer {
     private ArrayList<Client> clients;
     private ArrayList<Thread> threads;
     private ArrayList<Food> foods = new ArrayList<>();
+    private ArrayList<Player> players;
 
-
-//    ArrayList<Player> players = new ArrayList<>();
     int foodamount = 128;
     int screenx = 3000;
     int screeny = 3000;
@@ -30,7 +29,7 @@ public class AgarioServer {
 
     public AgarioServer() {
         this.port = 10000;
-
+        this.players = new ArrayList<>();
 
         this.clients = new ArrayList<>();
         this.threads = new ArrayList<>();
@@ -99,18 +98,36 @@ public class AgarioServer {
         return (Color)Array.get(colors, rnd);
     }
 
-    public void update(){
-        if (foods.size() < foodamount){
-            int randomX = (int)(Math.random() * screenx);
-            int randomY = (int)(Math.random() * screeny);
-            this.foods.add(new Food(new Point2D.Double(randomX, randomY), getRandomColor(), 20, 20));
+    public void update(Player player){
+        System.out.println("Name 1 : " + player.getName() + " - Position: " + player.getPosition());
+        for (Player p : this.players){
+            if (p.getName().equals(player.getName())){
+                p.setPosition(player.getPosition());
+                System.out.println("Name 2 : " + p.getName() + " - Position: " + p.getPosition());
+            }
         }
+//        if (foods.size() < foodamount){
+//            int randomX = (int)(Math.random() * screenx);
+//            int randomY = (int)(Math.random() * screeny);
+//            this.foods.add(new Food(new Point2D.Double(randomX, randomY), getRandomColor(), 20, 20));
+//        }
+    }
+
+    public void addPlayer(Player player){
+        this.players.add(player);
     }
 
     public void sentFoodToAllClients(){
         for (Client client : this.clients){
-            System.out.println(this.foods);
             client.writeObject(this.foods);
         }
     }
+
+    public void sentPlayersToAllClients(){
+        for (Client client : this.clients){
+            client.writeObject(this.players);
+        }
+    }
+
+
 }

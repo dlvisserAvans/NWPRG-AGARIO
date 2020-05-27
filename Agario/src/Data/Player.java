@@ -26,11 +26,11 @@ public class Player implements Serializable {
     public Player(String name) {
         this.color = getRandomColor();
         this.position = getRandomPoint();
-        this.shape = new Ellipse2D.Double(position.getX(), position.getY(), width, height);
         this.radius = width * 0.5;
         this.height = 40;
         this.width = 40;
         this.name = name;
+        this.shape = new Ellipse2D.Double(position.getX(), position.getY(), width, height);
     }
 
     public void growSize(){
@@ -82,17 +82,20 @@ public class Player implements Serializable {
         this.name = name;
     }
 
+
+
     public void draw(FXGraphics2D graphics2D){
         graphics2D.setColor(this.color);
         graphics2D.fill(this.shape);
+        graphics2D.draw(this.shape);
         graphics2D.setColor(Color.BLACK);
-        graphics2D.drawString(this.name, (int)position.getX() + (width / 2), (int)position.getY() + (height / 2));
+        graphics2D.drawString(this.name, (int)position.getX() + (width), (int)position.getY() + (height / 2));
     }
 
     public Point2D getRandomPoint() {
 
-        int randomX = (int) (Math.random() * 3000);
-        int randomY = (int) (Math.random() * 3000);
+        int randomX = (int) (Math.random() * 1000);
+        int randomY = (int) (Math.random() * 1000);
 
         return new Point2D.Double(randomX, randomY);
     }
