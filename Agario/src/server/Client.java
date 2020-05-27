@@ -35,16 +35,32 @@ public class Client implements Runnable{
             String name = dataInputStream.readUTF();
             System.out.println("Name :" + name);
 
+            //Step 1: Get/Set player name.
             Player player = (Player) objectInputStream.readObject();
             player.setName(name);
 
             System.out.println(player.getName());
             System.out.println(player.getPosition());
+            //Step 2: get the food from the server.
+            while (true) {
+                this.agarioServer.sentFoodToAllClients();
+                System.out.println("Test");
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-
     }
+
+    public void writeObject(Object object){
+        System.out.println("Sending objects to all players");
+        try {
+            this.objectOutputStream.writeObject(object);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

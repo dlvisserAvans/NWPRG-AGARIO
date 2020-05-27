@@ -6,8 +6,9 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
+import java.io.Serializable;
 
-public class Food{
+public class Food implements Serializable {
 
     private Shape shape;
     private Point2D position;

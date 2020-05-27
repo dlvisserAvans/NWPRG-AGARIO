@@ -19,9 +19,9 @@ public class AgarioServer {
     private Thread serverThread;
     private ArrayList<Client> clients;
     private ArrayList<Thread> threads;
+    private ArrayList<Food> foods = new ArrayList<>();
 
 
-    ArrayList<Food> foods = new ArrayList<>();
 //    ArrayList<Player> players = new ArrayList<>();
     int foodamount = 128;
     int screenx = 3000;
@@ -107,7 +107,10 @@ public class AgarioServer {
         }
     }
 
-//    public void sentToAllClients() {
-//        for ()
-//    }
+    public void sentFoodToAllClients(){
+        for (Client client : this.clients){
+            System.out.println(this.foods);
+            client.writeObject(this.foods);
+        }
+    }
 }
