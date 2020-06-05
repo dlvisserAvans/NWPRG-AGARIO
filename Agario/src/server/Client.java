@@ -56,7 +56,6 @@ public class Client implements Runnable{
                 while (true) {
                     this.agarioServer.sentFoodToAllClients();
                     this.agarioServer.sentPlayersToAllClients();
-                    this.player = (Player) objectInputStream.readObject();
                     this.agarioServer.update(this.player);
                 }
             }

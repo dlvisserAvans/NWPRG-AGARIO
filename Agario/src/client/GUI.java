@@ -12,26 +12,42 @@ import javafx.stage.Stage;
 import org.jfree.fx.FXGraphics2D;
 import org.jfree.fx.ResizableCanvas;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.io.*;
 import java.lang.reflect.Array;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Random;
 
 public class GUI extends Application {
-    ResizableCanvas canvas;
-    ArrayList<Player> players;
-    ArrayList<Food> foods;
-    Color[] colors = {Color.RED,Color.GREEN,Color.BLUE,Color.YELLOW,Color.CYAN,Color.MAGENTA,Color.BLACK,Color.GRAY,Color.LIGHT_GRAY,Color.DARK_GRAY,Color.ORANGE,Color.PINK};
+    private ResizableCanvas canvas;
+    private ArrayList<Player> players;
+    private ArrayList<Food> foods;
+    private Color[] colors = {Color.RED,Color.GREEN,Color.BLUE,Color.YELLOW,Color.CYAN,Color.MAGENTA,Color.BLACK,Color.GRAY,Color.LIGHT_GRAY,Color.DARK_GRAY,Color.ORANGE,Color.PINK};
     private Point2D mousepoint;
     private Player selectedPlayer = null;
     private Food selectedFood;
-    private FXGraphics2D graphics;
+
+    private static Socket socket;
+    private DataOutputStream dataOutputStream;
+    private DataInputStream dataInputStream;
+    private ObjectOutputStream objectOutputStream;
+    private ObjectInputStream objectInputStream;
+
+    private Player player;
 
     public GUI(){
         this.players = new ArrayList<>();
         this.foods = new ArrayList<>();
+
+        socket = null;
+        dataOutputStream = null;
+        dataInputStream = null;
+        objectOutputStream = null;
+        objectInputStream = null;
     }
 
     @Override
@@ -39,7 +55,7 @@ public class GUI extends Application {
         BorderPane mainPane = new BorderPane();
         canvas = new ResizableCanvas(g -> draw(g), mainPane);
         mainPane.setCenter(canvas);
-        graphics = new FXGraphics2D(canvas.getGraphicsContext2D());
+        FXGraphics2D graphics = new FXGraphics2D(canvas.getGraphicsContext2D());
         new AnimationTimer() {
             long last = -1;
 
@@ -47,7 +63,7 @@ public class GUI extends Application {
             public void handle(long now) {
                 if (last == -1)
                     last = now;
-                update((now - last) / 1000000000.0);
+                update((now - last) / 1000.0);
                 last = now;
                 draw(graphics);
             }
@@ -66,33 +82,53 @@ public class GUI extends Application {
         draw(new FXGraphics2D(canvas.getGraphicsContext2D()));
     }
 
-    private void update(double v) {
-        this.players = AgarioClient.getPlayers();
-        this.foods = AgarioClient.getFoods();
-        AgarioClient.update(selectedPlayer.getPosition());
-    }
-
     @Override
     public void init() {
         System.out.println("init()");
-        for (Food food : AgarioClient.getFoods()){
-            this.foods.add(food);
+
+        dataOutputStream = AgarioClient.getDataOutputStream();
+        dataInputStream = AgarioClient.getDataInputStream();
+        objectOutputStream = AgarioClient.getObjectOutputStream();
+        objectInputStream = AgarioClient.getObjectInputStream();
+
+        this.player = AgarioClient.getPlayer();
+        selectedPlayer = this.player;
+
+        try {
+            foods = (ArrayList<Food>) objectInputStream.readObject();
+            System.out.println("Foods size: " + foods.size());
+            players = (ArrayList<Player>) objectInputStream.readObject();
+            System.out.println("Players size: " + players.size());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
-        for (Player player : AgarioClient.getPlayers()){
-            this.players.add(player);
-        }
-        selectedPlayer = this.players.get(0);
     }
 
-    public void draw(FXGraphics2D graphics) {
+    private void update(double v) {
+        try {
+            this.foods = (ArrayList<Food>) objectInputStream.readObject();
+            this.players = (ArrayList<Player>) objectInputStream.readObject();
+            System.out.println("Update player: " + players.size());
+            this.objectOutputStream.writeObject(this.player);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void draw(FXGraphics2D graphics) {
         graphics.setTransform(new AffineTransform());
         graphics.setBackground(Color.white);
         graphics.clearRect(0, 0, (int)canvas.getWidth(), (int)canvas.getHeight());
 
-        for (Food food : AgarioClient.getFoods()){
+        for (Food food : this.foods){
             food.draw(graphics);
         }
-        for (Player player : AgarioClient.getPlayers()){
+        for (Player player : this.players){
             player.draw(graphics);
         }
     }
@@ -138,19 +174,19 @@ public class GUI extends Application {
         switch (e.getCode()){
             case LEFT:
                 System.out.println("Pressed " + e.getCode());
-                selectedPlayer.setPosition(new Point2D.Double(selectedPlayer.getPosition().getX() - 5, selectedPlayer.getPosition().getY()));
+                selectedPlayer.setPosition(new Point2D.Double(selectedPlayer.getPosition().getX() - 10, selectedPlayer.getPosition().getY()));
                 break;
             case RIGHT:
                 System.out.println("Pressed " + e.getCode());
-                selectedPlayer.setPosition(new Point2D.Double(selectedPlayer.getPosition().getX() + 5, selectedPlayer.getPosition().getY()));
+                selectedPlayer.setPosition(new Point2D.Double(selectedPlayer.getPosition().getX() + 10, selectedPlayer.getPosition().getY()));
                 break;
             case UP:
                 System.out.println("Pressed " + e.getCode());
-                selectedPlayer.setPosition(new Point2D.Double(selectedPlayer.getPosition().getX(), selectedPlayer.getPosition().getY() - 5));
+                selectedPlayer.setPosition(new Point2D.Double(selectedPlayer.getPosition().getX(), selectedPlayer.getPosition().getY() - 10));
                 break;
             case DOWN:
                 System.out.println("Pressed " + e.getCode());
-                selectedPlayer.setPosition(new Point2D.Double(selectedPlayer.getPosition().getX(), selectedPlayer.getPosition().getY() + 5));
+                selectedPlayer.setPosition(new Point2D.Double(selectedPlayer.getPosition().getX(), selectedPlayer.getPosition().getY() + 10));
                 break;
             case W:
                 System.out.println("Pressed " + e.getCode());

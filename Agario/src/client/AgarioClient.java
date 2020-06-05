@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import org.jfree.fx.FXGraphics2D;
 import org.jfree.fx.ResizableCanvas;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -22,18 +23,18 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
-public class AgarioClient {
+public class AgarioClient{
 
-    private Socket socket;
+    static Socket socket;
     private String hostname;
     private int port;
     private String name;
     private static Player player;
     private Boolean running = false;
-    private DataOutputStream dataOutputStream;
-    private DataInputStream dataInputStream;
-    private ObjectOutputStream objectOutputStream;
-    private ObjectInputStream objectInputStream;
+    private static DataOutputStream dataOutputStream;
+    private static DataInputStream dataInputStream;
+    private static ObjectOutputStream objectOutputStream;
+    private static ObjectInputStream objectInputStream;
     private FXGraphics2D graphics;
     private ResizableCanvas canvas;
     private static ArrayList<Food> foods = new ArrayList<>();
@@ -51,7 +52,9 @@ public class AgarioClient {
         this.hostname = hostname;
         this.port = port;
         this.name = name;
-        this.player = new Player(name);
+
+        player = new Player(name);
+
         dataInputStream = null;
         dataOutputStream = null;
         objectInputStream = null;
@@ -66,10 +69,10 @@ public class AgarioClient {
         try {
             this.socket = new Socket(this.hostname, this.port);
 
-            dataOutputStream = new DataOutputStream(this.socket.getOutputStream());
-            objectOutputStream = new ObjectOutputStream(this.socket.getOutputStream());
-            dataInputStream = new DataInputStream(this.socket.getInputStream());
-            objectInputStream = new ObjectInputStream(this.socket.getInputStream());
+            dataOutputStream = new DataOutputStream(socket.getOutputStream());
+            objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+            dataInputStream = new DataInputStream(socket.getInputStream());
+            objectInputStream = new ObjectInputStream(socket.getInputStream());
 
             //Step 1: Get/Set player name.
             System.out.print("What is your username: ");
@@ -84,40 +87,32 @@ public class AgarioClient {
             dataOutputStream.writeUTF(start);
             running = true;
 
-            if (start.equals("start")){
-
-                new Thread(() -> {
-                    while (true) {
-                        try {
-                            foods = (ArrayList<Food>) objectInputStream.readObject();
-                            players = (ArrayList<Player>) objectInputStream.readObject();
-                            objectOutputStream.writeObject(this.player);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (ClassNotFoundException e) {
-                            e.printStackTrace();
-                        } catch (ClassCastException e){
-                            System.out.println("Waarom gebeurd dit? " + e.getMessage());
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
-                new Thread(() -> {
-                    while(true){
-                        Application.launch(GUI.class);
-                    }
-
-                }).start();
+            if (start.equals("start")) {
+                Application.launch(GUI.class);
             }
+
+//                new Thread(() -> {
+//                    while (true) {
+//                        try {
+//
+//
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        } catch (ClassNotFoundException e) {
+//                            e.printStackTrace();
+//                        } catch (ClassCastException e){
+//                            System.out.println("Waarom gebeurd dit? " + e.getMessage());
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }).start();
+//            }
 
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassCastException e){
             e.printStackTrace();
         }
-    }
-    public static void update(Point2D position){
-        player.setPosition(position);
     }
 
     public static ArrayList<Food> getFoods(){
@@ -126,5 +121,29 @@ public class AgarioClient {
 
     public static ArrayList<Player> getPlayers(){
         return players;
+    }
+
+    static Socket getSocket(){
+        return socket;
+    }
+
+    static Player getPlayer(){
+        return player;
+    }
+
+    static DataOutputStream getDataOutputStream(){
+        return dataOutputStream;
+    }
+
+    static DataInputStream getDataInputStream(){
+        return dataInputStream;
+    }
+
+    static ObjectOutputStream getObjectOutputStream(){
+        return objectOutputStream;
+    }
+
+    static ObjectInputStream getObjectInputStream(){
+        return objectInputStream;
     }
 }
