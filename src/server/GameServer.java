@@ -1,7 +1,6 @@
 package server;
 
 import data.Food;
-import data.GameObject;
 import data.Player;
 
 import java.io.IOException;
@@ -9,19 +8,20 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class Server {
+public class GameServer {
 
     private int port;
     private ServerSocket serverSocket;
     private Thread serverThread;
-    private ArrayList<ServerClient> serverClients;
+    private ArrayList<GameServerClient> gameServerClients;
     private ArrayList<Thread> threads;
     private ArrayList<Player> players;
     private ArrayList<Food> foods;
+    private Boolean running = true;
 
-    public Server(int port) {
+    public GameServer(int port) {
         this.port = port;
-        this.serverClients = new ArrayList<>();
+        this.gameServerClients = new ArrayList<>();
         this.threads = new ArrayList<>();
         this.players = new ArrayList<>();
         this.foods = new ArrayList<>();
@@ -32,19 +32,19 @@ public class Server {
             this.serverSocket = new ServerSocket(port);
 
             this.serverThread = new Thread ( () -> {
-                while ( true ) {
+                while ( running ) {
                     System.out.println("Waiting for clients to connect.");
                     try {
                         Socket socket = this.serverSocket.accept();
-                        System.out.println("avans.ti.chat.client.Client connected from " + socket.getInetAddress().getHostAddress() + ".");
+                        System.out.println("Client connected from " + socket.getInetAddress().getHostAddress() + ".");
 
-                        ServerClient client = new ServerClient(socket, this);
+                        GameServerClient client = new GameServerClient(socket, this);
                         Thread threadClient = new Thread(client);
                         threadClient.start();
-                        this.serverClients.add(client);
+                        this.gameServerClients.add(client);
                         this.threads.add(threadClient);
 
-                        System.out.println("Total clients connected: " + this.serverClients.size());
+                        System.out.println("Total clients connected: " + this.gameServerClients.size());
 
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -60,7 +60,7 @@ public class Server {
             });
 
             this.serverThread.start();
-            System.out.println("avans.ti.chat.server.ChatServer is started and listening on port " + this.port);
+            System.out.println("Agar.io gameserver is listening on port: " + this.port);
 
         } catch (IOException e) {
             System.out.println("Could not connect: " + e.getMessage());
@@ -71,9 +71,9 @@ public class Server {
     }
 
     public void updateAllClients(){
-        for (ServerClient serverClient : serverClients){
-            serverClient.sendObject(this.players);
-            serverClient.sendObject(this.foods);
+        for (GameServerClient gameServerClient : gameServerClients){
+            gameServerClient.sendObject(this.players);
+            gameServerClient.sendObject(this.foods);
         }
     }
 

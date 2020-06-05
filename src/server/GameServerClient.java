@@ -3,19 +3,19 @@ package server;
 import java.io.*;
 import java.net.Socket;
 
-public class ServerClient implements Runnable {
+public class GameServerClient implements Runnable {
 
     private Socket socket;
-    private Server server;
+    private GameServer gameServer;
     private DataOutputStream out;
     private DataInputStream in;
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
     private String name;
 
-    public ServerClient ( Socket socket, Server server ) {
+    public GameServerClient(Socket socket, GameServer gameServer) {
         this.socket = socket;
-        this.server = server;
+        this.gameServer = gameServer;
     }
 
     public void sendObject ( Object object ) {
@@ -39,7 +39,7 @@ public class ServerClient implements Runnable {
 
             this.name = in.readUTF();
             System.out.println("#### " + this.name + " joined the game!");
-            this.server.updateAllClients();
+            this.gameServer.updateAllClients();
 
 //
 //            String message = "";
