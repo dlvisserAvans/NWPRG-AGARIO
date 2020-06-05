@@ -1,5 +1,7 @@
 package data;
 
+import java.awt.geom.Point2D;
+
 public class Player extends GameObject {
 
     private String name;
@@ -17,6 +19,11 @@ public class Player extends GameObject {
     @Override
     public void setHeight(int height) {
         super.setHeight(height);
+    }
+
+    @Override
+    public void setPosition(Point2D position) {
+        super.setPosition(position);
     }
 
     public String getName() {

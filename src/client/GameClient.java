@@ -17,6 +17,7 @@ public class GameClient {
     private String name;
     private static ArrayList<Food> foods;
     private static ArrayList<Player> players;
+    private static Player player;
 
     public GameClient( String host, int port ) {
         this.host = host;
@@ -42,7 +43,8 @@ public class GameClient {
             System.out.println("What is your name: ");
             this.name = scanner.nextLine();
             out.writeUTF(this.name);
-            objectOutputStream.writeObject(new Player(this.name));
+            player = new Player(this.name);
+            objectOutputStream.writeObject(player);
 
             players = (ArrayList<Player>) objectInputStream.readObject();
             foods = (ArrayList<Food>) objectInputStream.readObject();
@@ -82,23 +84,27 @@ public class GameClient {
         return true;
     }
 
-    public void createNewPlayer(String name){
-        
+    public static Player getPlayer() {
+        return player;
+    }
+
+    public static void setPlayer(Player player) {
+        GameClient.player = player;
     }
 
     public static ArrayList<Food> getFoods() {
         return foods;
     }
 
-    public void setFoods(ArrayList<Food> foods) {
-        this.foods = foods;
+    public static void setFoods(ArrayList<Food> foods) {
+        GameClient.foods = foods;
     }
 
     public static ArrayList<Player> getPlayers() {
         return players;
     }
 
-    public void setPlayers(ArrayList<Player> players) {
-        this.players = players;
+    public static void setPlayers(ArrayList<Player> players) {
+        GameClient.players = players;
     }
 }

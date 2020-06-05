@@ -5,6 +5,7 @@ import data.Player;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.jfree.fx.FXGraphics2D;
@@ -12,6 +13,7 @@ import org.jfree.fx.ResizableCanvas;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 public class GUI extends Application {
@@ -19,9 +21,6 @@ public class GUI extends Application {
     private GameClient gameClient;
     private ArrayList<Player> players;
     private ArrayList<Food> foods;
-//    private Player selectedPlayer = null;
-//    private Food selectedFood;
-
     private Player player;
 
     public GUI() {
@@ -48,7 +47,7 @@ public class GUI extends Application {
             }
         }.start();
 
-//        canvas.setOnKeyPressed(e -> keyPressed(e));
+        canvas.setOnKeyPressed(e -> keyPressed(e));
 //        canvas.setOnKeyReleased(e -> keyReleased(e));
 //        canvas.setOnMousePressed(e -> mouseClicked(e));
 //        canvas.setOnMouseDragged(e -> mouseDragged(e));
@@ -67,10 +66,11 @@ public class GUI extends Application {
 
         foods = GameClient.getFoods();
         players = GameClient.getPlayers();
-
+        player = GameClient.getPlayer();
     }
 
     private void update(double v) {
+        player = GameClient.getPlayer();
     }
 
     private void draw(FXGraphics2D graphics) {
@@ -117,39 +117,27 @@ public class GUI extends Application {
 //        }
 //    }
 
-//    public void keyPressed(KeyEvent e){
-//        System.out.println("public void keyPressed");
-//        switch (e.getCode()){
-//            case LEFT:
-//                System.out.println("Pressed " + e.getCode());
-//                selectedPlayer.setPosition(new Point2D.Double(selectedPlayer.getPosition().getX() - 10, selectedPlayer.getPosition().getY()));
-//                break;
-//            case RIGHT:
-//                System.out.println("Pressed " + e.getCode());
-//                selectedPlayer.setPosition(new Point2D.Double(selectedPlayer.getPosition().getX() + 10, selectedPlayer.getPosition().getY()));
-//                break;
-//            case UP:
-//                System.out.println("Pressed " + e.getCode());
-//                selectedPlayer.setPosition(new Point2D.Double(selectedPlayer.getPosition().getX(), selectedPlayer.getPosition().getY() - 10));
-//                break;
-//            case DOWN:
-//                System.out.println("Pressed " + e.getCode());
-//                selectedPlayer.setPosition(new Point2D.Double(selectedPlayer.getPosition().getX(), selectedPlayer.getPosition().getY() + 10));
-//                break;
-//            case W:
-//                System.out.println("Pressed " + e.getCode());
-//                break;
-//            case A:
-//                System.out.println("Pressed " + e.getCode());
-//                break;
-//            case S:
-//                System.out.println("Pressed " + e.getCode());
-//                break;
-//            case D:
-//                System.out.println("Pressed " + e.getCode());
-//                break;
-//        }
-//    }
+    public void keyPressed(KeyEvent e){
+        System.out.println("public void keyPressed");
+        switch (e.getCode()){
+            case A:
+                System.out.println("Pressed " + e.getCode());
+                GameClient.getPlayer().setPosition(new Point2D.Double(GameClient.getPlayer().getPosition().getX() - 10, GameClient.getPlayer().getPosition().getY()));
+                break;
+            case D:
+                System.out.println("Pressed " + e.getCode());
+                GameClient.getPlayer().setPosition(new Point2D.Double(GameClient.getPlayer().getPosition().getX() + 10, GameClient.getPlayer().getPosition().getY()));
+                break;
+            case W:
+                System.out.println("Pressed " + e.getCode());
+                GameClient.getPlayer().setPosition(new Point2D.Double(GameClient.getPlayer().getPosition().getX(), GameClient.getPlayer().getPosition().getY() - 10));
+                break;
+            case S:
+                System.out.println("Pressed " + e.getCode());
+                GameClient.getPlayer().setPosition(new Point2D.Double(GameClient.getPlayer().getPosition().getX(), GameClient.getPlayer().getPosition().getY() + 10));
+                break;
+        }
+    }
 
 //    private void keyReleased(KeyEvent e) {
 //        System.out.println("public void keyReleased");

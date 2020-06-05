@@ -1,5 +1,6 @@
 package server;
 
+import client.GameClient;
 import data.Player;
 
 import java.io.*;
