@@ -31,6 +31,11 @@ public class GameServer {
         try {
             this.serverSocket = new ServerSocket(port);
 
+            for (int i = 0; i < 128 ; i++){
+                foods.add(new Food());
+            }
+
+
             this.serverThread = new Thread ( () -> {
                 while ( running ) {
                     System.out.println("Waiting for clients to connect.");
@@ -77,5 +82,20 @@ public class GameServer {
         }
     }
 
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(ArrayList<Player> players) {
+        this.players = players;
+    }
+
+    public ArrayList<Food> getFoods() {
+        return foods;
+    }
+
+    public void setFoods(ArrayList<Food> foods) {
+        this.foods = foods;
+    }
 }
 
